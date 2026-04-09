@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "3a-workflows",
-      "source": ".",
+      "source": "./",
       "description": "A harness for building agent harnesses — Claude Code plugin for the 3A (Agentic AI Acceleration) co-building program"
     }
   ]
