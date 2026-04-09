@@ -1,0 +1,38 @@
+{
+  "description": "3a-workflows quality control hooks",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-init.sh\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/validate-code.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before finishing, check:\n1. If you implemented a feature: Is .3a/features.json updated with the current status?\n2. If significant work was done: Should a /3a-checkpoint be created?\n3. If multiple features are done since last eval: Suggest running /3a-eval.\nOnly mention items that are actually relevant — don't nag about every item."
+          }
+        ]
+      }
+    ]
+  }
+}

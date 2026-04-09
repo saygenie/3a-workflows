@@ -1,0 +1,17 @@
+{
+  "name": "3a-workflows",
+  "description": "A harness for building agent harnesses — Claude Code plugin for the 3A (Agentic AI Acceleration) co-building program",
+  "version": "0.1.0",
+  "author": {
+    "name": "AWS AI/ML Specialist SA Team"
+  },
+  "keywords": [
+    "agentic-ai",
+    "harness-engineering",
+    "co-building",
+    "strands-agents",
+    "bedrock-agentcore",
+    "evaluation",
+    "sprint-management"
+  ]
+}

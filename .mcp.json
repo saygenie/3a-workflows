@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "strands-agents": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["strands-agents-mcp"],
+      "description": "Strands Agents SDK documentation and references"
+    },
+    "aws-mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["awslabs.aws-mcp-server@latest"],
+      "description": "AWS services (IAM, VPC, S3, DynamoDB, etc.)"
+    }
+  }
+}

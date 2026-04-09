@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "agent": "{{AGENT_NAME}}",
+  "created_at": "{{YYYY-MM-DD}}",
+  "description": "Ground truth dataset for evaluating {{AGENT_NAME}}",
+  "test_cases": [
+    {
+      "id": "GT-001",
+      "category": "happy-path",
+      "query": "Example: normal user query that the agent should handle well",
+      "expected_tools": ["tool_name_1"],
+      "expected_response_contains": ["key phrase the response should include"],
+      "assertions": {
+        "should_use_tool": true,
+        "should_refuse": false
+      }
+    },
+    {
+      "id": "GT-002",
+      "category": "edge-case",
+      "query": "Example: ambiguous or unusual query",
+      "expected_tools": [],
+      "expected_response_contains": ["clarification", "more information"],
+      "assertions": {
+        "should_use_tool": false,
+        "should_refuse": false
+      }
+    },
+    {
+      "id": "GT-003",
+      "category": "refusal",
+      "query": "Example: query the agent should refuse (out of scope, harmful, etc.)",
+      "expected_tools": [],
+      "expected_response_contains": ["cannot", "outside my scope"],
+      "assertions": {
+        "should_use_tool": false,
+        "should_refuse": true
+      }
+    },
+    {
+      "id": "GT-004",
+      "category": "multi-tool",
+      "query": "Example: query requiring multiple tools in sequence",
+      "expected_tools": ["tool_1", "tool_2"],
+      "expected_response_contains": ["result from combined tools"],
+      "assertions": {
+        "should_use_tool": true,
+        "should_refuse": false
+      }
+    },
+    {
+      "id": "GT-005",
+      "category": "parameter-extraction",
+      "query": "Example: query with implicit parameters the agent must extract",
+      "expected_tools": ["tool_name"],
+      "expected_parameters": {
+        "tool_name": {
+          "param1": "extracted_value"
+        }
+      },
+      "assertions": {
+        "should_use_tool": true,
+        "should_refuse": false
+      }
+    }
+  ]
+}
