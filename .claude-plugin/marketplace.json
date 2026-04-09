@@ -1,0 +1,13 @@
+{
+  "name": "3a-workflows",
+  "owner": {
+    "name": "AWS AI/ML Specialist SA Team"
+  },
+  "plugins": [
+    {
+      "name": "3a-workflows",
+      "source": ".",
+      "description": "A harness for building agent harnesses — Claude Code plugin for the 3A (Agentic AI Acceleration) co-building program"
+    }
+  ]
+}
