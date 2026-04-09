@@ -1,6 +1,5 @@
 ---
 description: "Start a new 3A sprint — generate 4 key deliverables, architecture decisions, and sprint plan"
-allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/init-sprint.sh:*)"]
 ---
 
 # 3A Sprint Kickoff
@@ -9,10 +8,19 @@ You are initializing a new 3A (Agentic AI Acceleration) co-building sprint. This
 
 ## Step 1: Initialize Sprint Directory
 
-Run the sprint initialization script:
+Create the `.3a/` directory structure. If `.3a/` already exists, warn the user that an active sprint is in progress and suggest running `/3a-handoff` first.
 
-```!
-"${CLAUDE_PLUGIN_ROOT}/scripts/init-sprint.sh"
+Create these directories:
+- `.3a/architecture/decisions/`
+- `.3a/eval/results/`
+- `.3a/visual/content/`
+- `.3a/visual/state/`
+- `.3a/checkpoints/`
+- `.3a/handoff/`
+
+Create `.3a/.gitignore` with:
+```
+visual/
 ```
 
 ## Step 2: Gather Requirements

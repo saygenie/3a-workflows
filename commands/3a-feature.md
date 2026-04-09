@@ -1,6 +1,5 @@
 ---
 description: "Implement a feature with L1 feedback loop — design, build, test, commit"
-allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/update-feature-status.sh:*)"]
 ---
 
 # 3A Feature Implementation
@@ -56,10 +55,7 @@ Keep iterating until tests pass. Do not skip tests or mark as done with failing 
 
 After implementation is complete:
 
-1. Update features.json:
-```!
-"${CLAUDE_PLUGIN_ROOT}/scripts/update-feature-status.sh" "$FEATURE_ID" "done"
-```
+1. Update the feature's status in `.3a/features.json` to `done` and update the test counts.
 
 2. Suggest adding new test cases to `.3a/ground-truth.json` based on this feature:
    - What queries does this feature enable?
