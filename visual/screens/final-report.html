@@ -1,0 +1,800 @@
+<!--
+  Final Report — Standalone HTML (PDF-ready)
+  Used by: /3a-handoff
+  Purpose: Comprehensive visual report of the agent application built during the sprint.
+  This is a STANDALONE page (not injected into frame-template) so it prints cleanly to PDF.
+
+  How it works:
+  1. /3a-handoff reads .3a/ files (agent-definition, tool-definitions, features.json, eval results, etc.)
+  2. Agent generates this HTML with all template variables replaced
+  3. Saved to .3a/visual/content/final-report.html
+  4. User opens in browser → Ctrl+P → Save as PDF
+
+  Template variables — agent replaces {{...}} blocks with actual content.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PROJECT_NAME}} — Agent Application Report</title>
+  <style>
+    /* === Base === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f8f9fa;
+      --text: #1a1a2e;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --accent: #0066ff;
+      --success: #28a745;
+      --warning: #e67e22;
+      --danger: #dc3545;
+      --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* === Print Optimization === */
+    @media print {
+      body { font-size: 11pt; line-height: 1.5; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none !important; }
+      .diagram-box, .card, table { page-break-inside: avoid; }
+      a { color: var(--text); text-decoration: none; }
+      @page {
+        size: A4;
+        margin: 20mm 15mm;
+      }
+    }
+
+    /* === Layout === */
+    .report { max-width: 900px; margin: 0 auto; padding: 40px 32px; }
+
+    /* === Cover === */
+    .cover {
+      text-align: center;
+      padding: 80px 20px 60px;
+      border-bottom: 3px solid var(--accent);
+      margin-bottom: 40px;
+    }
+    .cover-badge {
+      display: inline-block;
+      padding: 4px 16px;
+      background: var(--accent);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .cover h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .cover-sub {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    .cover-meta {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    .cover-meta span { margin: 0 12px; }
+
+    /* === Section === */
+    .section { margin-bottom: 40px; }
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+    .section-subtitle {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 20px 0 10px;
+    }
+    p { margin-bottom: 12px; }
+    ul, ol { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 4px; }
+
+    /* === Diagram Box (SVG/ASCII Architecture) === */
+    .diagram-box {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .diagram-box .diagram-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    /* === SVG Diagram Styles === */
+    .diagram-box svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .node-agent { fill: #dbeafe; stroke: #3b82f6; stroke-width: 2; rx: 10; }
+    .node-tool { fill: #fef3c7; stroke: #f59e0b; stroke-width: 2; rx: 6; }
+    .node-service { fill: #d1fae5; stroke: #10b981; stroke-width: 2; rx: 6; }
+    .node-user { fill: #ede9fe; stroke: #8b5cf6; stroke-width: 2; rx: 20; }
+    .node-code { fill: #fee2e2; stroke: #ef4444; stroke-width: 2; rx: 6; }
+    .node-label { font-family: var(--font); font-size: 13px; font-weight: 600; text-anchor: middle; dominant-baseline: central; fill: var(--text); }
+    .node-sublabel { font-family: var(--font); font-size: 10px; text-anchor: middle; dominant-baseline: central; fill: var(--text-light); }
+    .edge { stroke: #94a3b8; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+    .edge-label { font-family: var(--font); font-size: 10px; fill: var(--text-light); text-anchor: middle; }
+
+    /* === Tables === */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--bg-alt);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-light);
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* === Cards === */
+    .card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 12px 0;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    /* === Metrics Row === */
+    .metrics-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .metric-card {
+      flex: 1;
+      min-width: 140px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .metric-card .value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .metric-card .label {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    .value-good { color: var(--success); }
+    .value-warn { color: var(--warning); }
+    .value-bad { color: var(--danger); }
+
+    /* === Badge === */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-agent { background: #dbeafe; color: #1e40af; }
+    .badge-tool { background: #fef3c7; color: #92400e; }
+    .badge-service { background: #d1fae5; color: #065f46; }
+    .badge-code { background: #fee2e2; color: #991b1b; }
+
+    /* === Flow Steps === */
+    .flow-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 20px 0;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+    .flow-step {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      text-align: center;
+      min-width: 120px;
+      font-size: 0.85rem;
+    }
+    .flow-step strong { display: block; font-size: 0.8rem; color: var(--accent); }
+    .flow-arrow {
+      color: var(--text-light);
+      font-size: 1.2rem;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    /* === Code Block === */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--bg-alt);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    pre {
+      background: var(--bg-alt);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    pre code { background: none; padding: 0; }
+
+    /* === TOC === */
+    .toc {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 28px;
+      margin: 24px 0;
+    }
+    .toc-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    .toc ol { margin: 0; padding-left: 20px; }
+    .toc li { margin-bottom: 4px; font-size: 0.9rem; }
+    .toc a { color: var(--accent); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* === Footer === */
+    .report-footer {
+      text-align: center;
+      padding: 40px 20px 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+      color: var(--text-light);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="report">
+
+  <!-- ============================== -->
+  <!--           COVER PAGE           -->
+  <!-- ============================== -->
+  <div class="cover">
+    <div class="cover-badge">3A Program — Agent Application Report</div>
+    <h1>{{PROJECT_NAME}}</h1>
+    <p class="cover-sub">{{PROJECT_DESCRIPTION}}</p>
+    <p class="cover-meta">
+      <span>{{SPRINT_DATE_RANGE}}</span>
+      <span>|</span>
+      <span>{{TEAM_MEMBERS}}</span>
+    </p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#architecture">Agent Architecture</a></li>
+      <li><a href="#tools">Tool Design</a></li>
+      <li><a href="#flow">Interaction Flow</a></li>
+      <li><a href="#services">AWS Services</a></li>
+      <li><a href="#evaluation">Evaluation Results</a></li>
+      <li><a href="#features">Features Delivered</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ol>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--        1. OVERVIEW             -->
+  <!-- ============================== -->
+  <div class="section" id="overview">
+    <h2 class="section-title">1. Overview</h2>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="value value-good">{{FINAL_EVAL_SCORE}}%</div>
+        <div class="label">Final Eval Score</div>
+      </div>
+      <div class="metric-card">
+        <div class="value">{{FEATURES_COMPLETED}}/{{FEATURES_TOTAL}}</div>
+        <div class="label">Features</div>
+      </div>
+      <div class="metric-card">
+        <div class="value">{{TOOLS_COUNT}}</div>
+        <div class="label">Tools</div>
+      </div>
+      <div class="metric-card">
+        <div class="value">{{GT_CASES}}</div>
+        <div class="label">Test Cases</div>
+      </div>
+    </div>
+
+    <!-- {{OVERVIEW_DESCRIPTION}} — 2-3 paragraph project description by agent -->
+    <p>{{OVERVIEW_DESCRIPTION}}</p>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--     2. AGENT ARCHITECTURE      -->
+  <!-- ============================== -->
+  <div class="section page-break" id="architecture">
+    <h2 class="section-title">2. Agent Architecture</h2>
+
+    <p><strong>Pattern:</strong> {{ARCHITECTURE_PATTERN}}</p>
+    <p>{{ARCHITECTURE_RATIONALE}}</p>
+
+    <!-- Architecture Diagram (SVG) -->
+    <div class="diagram-box">
+      <div class="diagram-title">Agent Architecture Diagram</div>
+      <!--
+        Agent generates an SVG here using the CSS classes:
+        .node-agent, .node-tool, .node-service, .node-user, .node-code
+        .node-label, .node-sublabel, .edge, .edge-label
+
+        Example structure for a single-agent architecture:
+      -->
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+          </marker>
+        </defs>
+
+        <!-- {{ARCHITECTURE_SVG_NODES}} — agent generates nodes and edges -->
+
+        <!-- Example: User → Agent → Tools → Services -->
+        <ellipse class="node-user" cx="100" cy="200" rx="60" ry="35" />
+        <text class="node-label" x="100" y="196">User</text>
+        <text class="node-sublabel" x="100" y="212">Query</text>
+
+        <rect class="node-agent" x="240" y="165" width="140" height="70" />
+        <text class="node-label" x="310" y="196">Agent</text>
+        <text class="node-sublabel" x="310" y="212">{{AGENT_NAME}}</text>
+
+        <rect class="node-tool" x="470" y="100" width="130" height="50" />
+        <text class="node-label" x="535" y="128">{{TOOL_1_NAME}}</text>
+
+        <rect class="node-tool" x="470" y="175" width="130" height="50" />
+        <text class="node-label" x="535" y="203">{{TOOL_2_NAME}}</text>
+
+        <rect class="node-tool" x="470" y="250" width="130" height="50" />
+        <text class="node-label" x="535" y="278">{{TOOL_3_NAME}}</text>
+
+        <rect class="node-service" x="680" y="100" width="100" height="50" />
+        <text class="node-label" x="730" y="128">{{SERVICE_1}}</text>
+
+        <rect class="node-service" x="680" y="175" width="100" height="50" />
+        <text class="node-label" x="730" y="203">{{SERVICE_2}}</text>
+
+        <rect class="node-service" x="680" y="250" width="100" height="50" />
+        <text class="node-label" x="730" y="278">{{SERVICE_3}}</text>
+
+        <!-- Edges -->
+        <line class="edge" x1="160" y1="200" x2="238" y2="200" />
+        <line class="edge" x1="380" y1="185" x2="468" y2="125" />
+        <line class="edge" x1="380" y1="200" x2="468" y2="200" />
+        <line class="edge" x1="380" y1="215" x2="468" y2="275" />
+        <line class="edge" x1="600" y1="125" x2="678" y2="125" />
+        <line class="edge" x1="600" y1="200" x2="678" y2="200" />
+        <line class="edge" x1="600" y1="275" x2="678" y2="275" />
+      </svg>
+    </div>
+
+    <!-- Legend -->
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0;">
+      <span><span class="badge badge-agent">Agent</span> LLM reasoning</span>
+      <span><span class="badge badge-tool">Tool</span> Agent-callable function</span>
+      <span><span class="badge badge-service">Service</span> External / AWS</span>
+      <span><span class="badge badge-code">Code</span> Deterministic logic</span>
+    </div>
+
+    <!-- Agent + Code Boundary -->
+    <h3 class="section-subtitle">Agent vs Deterministic Code</h3>
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Type</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{AGENT_CODE_BOUNDARY_TABLE}} — agent fills rows -->
+        <tr>
+          <td>User intent parsing</td>
+          <td><span class="badge badge-agent">Agent</span></td>
+          <td>Requires natural language understanding</td>
+        </tr>
+        <tr>
+          <td>Input validation</td>
+          <td><span class="badge badge-code">Code</span></td>
+          <td>Deterministic rules, no ambiguity</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--       3. TOOL DESIGN           -->
+  <!-- ============================== -->
+  <div class="section page-break" id="tools">
+    <h2 class="section-title">3. Tool Design</h2>
+
+    <p>{{TOOLS_COUNT}} tools designed following the 5-element principle (Name, Parameters, Return Format, Error Conditions, Usage Guidance).</p>
+
+    <!-- Tool Summary Table -->
+    <table>
+      <thead>
+        <tr><th>Tool</th><th>Purpose</th><th>Parameters</th><th>External Service</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{TOOLS_TABLE}} — agent fills from tool-definitions.md -->
+        <tr>
+          <td><code>{{TOOL_1_NAME}}</code></td>
+          <td>{{TOOL_1_PURPOSE}}</td>
+          <td>{{TOOL_1_PARAMS}}</td>
+          <td>{{TOOL_1_SERVICE}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Tool Relationship Diagram -->
+    <div class="diagram-box">
+      <div class="diagram-title">Tool Dependency Map</div>
+      <!--
+        Agent generates SVG showing which tools call which services,
+        and which tools might be chained together.
+        {{TOOL_DEPENDENCY_SVG}}
+      -->
+      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+          </marker>
+        </defs>
+        <!-- {{TOOL_DEPENDENCY_SVG_NODES}} -->
+      </svg>
+    </div>
+
+    <!-- Design Decisions -->
+    <h3 class="section-subtitle">Key Design Decisions</h3>
+    <!-- {{TOOL_DESIGN_DECISIONS}} — agent fills based on tool-definitions.md -->
+    <div class="card">
+      <div class="card-title">Consolidation Applied</div>
+      <p>{{TOOL_CONSOLIDATION_NOTES}}</p>
+    </div>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--     4. INTERACTION FLOW        -->
+  <!-- ============================== -->
+  <div class="section page-break" id="flow">
+    <h2 class="section-title">4. Interaction Flow</h2>
+
+    <p>Primary user interaction patterns identified from ground truth analysis:</p>
+
+    <!-- Flow 1: Happy Path -->
+    <h3 class="section-subtitle">Happy Path — {{FLOW_1_NAME}}</h3>
+    <div class="flow-steps">
+      <!-- {{FLOW_1_STEPS}} — agent generates step blocks -->
+      <div class="flow-step"><strong>Step 1</strong>User query</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 2</strong>Agent reasoning</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 3</strong>Tool call</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 4</strong>Response</div>
+    </div>
+
+    <!-- Flow 2: Multi-tool -->
+    <h3 class="section-subtitle">Multi-Tool — {{FLOW_2_NAME}}</h3>
+    <div class="flow-steps">
+      <!-- {{FLOW_2_STEPS}} -->
+      <div class="flow-step"><strong>Step 1</strong>User query</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 2</strong>Tool A</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 3</strong>Tool B</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 4</strong>Response</div>
+    </div>
+
+    <!-- Flow 3: Refusal -->
+    <h3 class="section-subtitle">Refusal — Out of Scope</h3>
+    <div class="flow-steps">
+      <!-- {{FLOW_3_STEPS}} -->
+      <div class="flow-step"><strong>Step 1</strong>User query</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 2</strong>Scope check</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step" style="border-color: var(--danger);"><strong>Refuse</strong>Redirect user</div>
+    </div>
+
+    <!-- Guardrails Summary -->
+    <h3 class="section-subtitle">Guardrails</h3>
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Rule</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{GUARDRAILS_TABLE}} — from agent-definition.md MUST / MUST NOT -->
+        <tr><td><span class="badge badge-agent">MUST DO</span></td><td>{{MUST_DO_1}}</td></tr>
+        <tr><td><span class="badge" style="background:#fee2e2;color:#991b1b;">MUST NOT</span></td><td>{{MUST_NOT_1}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--      5. AWS SERVICES           -->
+  <!-- ============================== -->
+  <div class="section page-break" id="services">
+    <h2 class="section-title">5. AWS Services</h2>
+
+    <!-- Service Architecture -->
+    <div class="diagram-box">
+      <div class="diagram-title">AWS Service Architecture</div>
+      <!--
+        Agent generates SVG showing:
+        - Bedrock (model access)
+        - DynamoDB / S3 / other data stores
+        - AgentCore Runtime (if deployed)
+        - Networking (VPC, API Gateway)
+        - Observability (CloudWatch, X-Ray)
+        {{AWS_ARCHITECTURE_SVG}}
+      -->
+      <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+          </marker>
+        </defs>
+        <!-- {{AWS_ARCHITECTURE_SVG_NODES}} -->
+
+        <!-- Example layout -->
+        <rect x="20" y="20" width="760" height="310" rx="12" fill="none" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6" />
+        <text x="40" y="45" style="font-family:var(--font);font-size:12px;fill:#94a3b8;font-weight:600;">AWS Cloud</text>
+
+        <rect class="node-service" x="60" y="80" width="160" height="60" />
+        <text class="node-label" x="140" y="106">Amazon Bedrock</text>
+        <text class="node-sublabel" x="140" y="122">Claude Sonnet</text>
+
+        <rect class="node-service" x="60" y="200" width="160" height="60" />
+        <text class="node-label" x="140" y="226">AgentCore Runtime</text>
+        <text class="node-sublabel" x="140" y="242">Agent Hosting</text>
+
+        <rect class="node-service" x="320" y="80" width="140" height="60" />
+        <text class="node-label" x="390" y="106">{{AWS_SERVICE_1}}</text>
+        <text class="node-sublabel" x="390" y="122">{{AWS_SERVICE_1_ROLE}}</text>
+
+        <rect class="node-service" x="320" y="200" width="140" height="60" />
+        <text class="node-label" x="390" y="226">{{AWS_SERVICE_2}}</text>
+        <text class="node-sublabel" x="390" y="242">{{AWS_SERVICE_2_ROLE}}</text>
+
+        <rect class="node-service" x="560" y="80" width="180" height="60" />
+        <text class="node-label" x="650" y="106">CloudWatch</text>
+        <text class="node-sublabel" x="650" y="122">Logs + Metrics + Traces</text>
+
+        <rect class="node-service" x="560" y="200" width="180" height="60" />
+        <text class="node-label" x="650" y="226">Secrets Manager</text>
+        <text class="node-sublabel" x="650" y="242">Credentials</text>
+      </svg>
+    </div>
+
+    <!-- Service Table -->
+    <table>
+      <thead>
+        <tr><th>Service</th><th>Role</th><th>Configuration</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{AWS_SERVICES_TABLE}} -->
+        <tr>
+          <td>Amazon Bedrock</td>
+          <td>LLM inference</td>
+          <td>{{BEDROCK_CONFIG}}</td>
+        </tr>
+        <tr>
+          <td>AgentCore Runtime</td>
+          <td>Agent hosting</td>
+          <td>{{AGENTCORE_CONFIG}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- IAM Summary -->
+    <h3 class="section-subtitle">IAM & Security</h3>
+    <div class="card">
+      <!-- {{IAM_SUMMARY}} -->
+      <p>{{IAM_DESCRIPTION}}</p>
+    </div>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--      6. EVALUATION             -->
+  <!-- ============================== -->
+  <div class="section page-break" id="evaluation">
+    <h2 class="section-title">6. Evaluation Results</h2>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="value value-good">{{SCORE_TOOL_SELECTION}}%</div>
+        <div class="label">Tool Selection</div>
+      </div>
+      <div class="metric-card">
+        <div class="value value-good">{{SCORE_PARAM_ACCURACY}}%</div>
+        <div class="label">Parameter Accuracy</div>
+      </div>
+      <div class="metric-card">
+        <div class="value value-good">{{SCORE_REFUSAL}}%</div>
+        <div class="label">Refusal Accuracy</div>
+      </div>
+      <div class="metric-card">
+        <div class="value value-good">{{SCORE_QUALITY}}%</div>
+        <div class="label">Response Quality</div>
+      </div>
+    </div>
+
+    <!-- Score Progression -->
+    <h3 class="section-subtitle">Score Progression</h3>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Tool</th><th>Param</th><th>Refusal</th><th>Quality</th><th>Overall</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{EVAL_HISTORY_TABLE}} -->
+        <tr>
+          <td>Day 2</td><td>82</td><td>85</td><td>90</td><td>68</td><td><strong>72</strong></td><td>Baseline</td>
+        </tr>
+        <tr>
+          <td>Day 5</td><td>95</td><td>97</td><td>100</td><td>88</td><td><strong>92</strong></td><td>Final</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Known Limitations -->
+    <h3 class="section-subtitle">Known Limitations</h3>
+    <div class="card">
+      <!-- {{KNOWN_LIMITATIONS}} -->
+      <ul>
+        <li>{{LIMITATION_1}}</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--     7. FEATURES DELIVERED      -->
+  <!-- ============================== -->
+  <div class="section page-break" id="features">
+    <h2 class="section-title">7. Features Delivered</h2>
+
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Feature</th><th>Priority</th><th>Status</th><th>Tests</th><th>Assignee</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{FEATURES_TABLE}} — from features.json -->
+        <tr>
+          <td>F-001</td>
+          <td>{{FEATURE_1_NAME}}</td>
+          <td>{{FEATURE_1_PRIORITY}}</td>
+          <td>{{FEATURE_1_STATUS}}</td>
+          <td>{{FEATURE_1_TESTS}}</td>
+          <td>{{FEATURE_1_ASSIGNEE}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ADRs -->
+    <h3 class="section-subtitle">Architecture Decision Records</h3>
+    <table>
+      <thead>
+        <tr><th>ADR</th><th>Decision</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <!-- {{ADRS_TABLE}} — from .3a/architecture/decisions/ -->
+        <tr>
+          <td>ADR-001</td>
+          <td>{{ADR_1_DECISION}}</td>
+          <td>{{ADR_1_RATIONALE}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--        8. ROADMAP              -->
+  <!-- ============================== -->
+  <div class="section page-break" id="roadmap">
+    <h2 class="section-title">8. Roadmap: Crawl → Walk → Run</h2>
+
+    <div class="card" style="border-left: 4px solid var(--success);">
+      <div class="card-title">Crawl — Current State (Sprint Deliverable)</div>
+      <ul>
+        <!-- {{CRAWL_ITEMS}} -->
+        <li>{{CRAWL_1}}</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--warning);">
+      <div class="card-title">Walk — Next 1-2 Weeks</div>
+      <ul>
+        <!-- {{WALK_ITEMS}} -->
+        <li>{{WALK_1}}</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--accent);">
+      <div class="card-title">Run — 1-2 Months</div>
+      <ul>
+        <!-- {{RUN_ITEMS}} -->
+        <li>{{RUN_1}}</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ============================== -->
+  <!--           FOOTER               -->
+  <!-- ============================== -->
+  <div class="report-footer">
+    <p>Generated by <strong>3A Program</strong> (Agentic AI Acceleration) — {{GENERATION_DATE}}</p>
+    <p>AWS AI/ML Specialist SA Team</p>
+  </div>
+
+</div>
+
+</body>
+</html>

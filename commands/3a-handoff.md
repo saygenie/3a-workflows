@@ -1,16 +1,32 @@
 ---
-description: "Close sprint — generate handoff documents, finalize CLAUDE.md, clean up .3a/"
+description: "Close sprint — generate final report (HTML/PDF), handoff documents, finalize CLAUDE.md, clean up .3a/"
 ---
 
 # 3A Sprint Handoff
 
 Close the sprint and hand off to the customer team. This is the final step — everything should be documented well enough that the customer can operate independently.
 
-## Step 1: Generate Handoff Documents
+## Step 1: Generate Final Report (HTML)
+
+Generate a comprehensive visual report of the agent application as a standalone HTML file.
+
+1. Read all `.3a/` files: `agent-definition.md`, `tool-definitions.md`, `features.json`, `eval/results/`, `architecture/decisions/`
+2. Use the template at `${CLAUDE_PLUGIN_ROOT}/visual/screens/final-report.html`
+3. Replace all `{{...}}` template variables with actual project data
+4. **Generate SVG diagrams inline** — do NOT use placeholder examples:
+   - **Architecture Diagram**: Show actual agents, tools, and services with connections
+   - **Tool Dependency Map**: Show actual tool→service relationships
+   - **AWS Service Architecture**: Show actual AWS services used
+5. Save to `.3a/visual/content/final-report.html`
+6. Tell the user: "브라우저에서 열어서 확인하세요. Ctrl+P로 PDF 출력 가능합니다."
+
+The report covers 8 sections: Overview, Architecture, Tool Design, Interaction Flow, AWS Services, Evaluation, Features, Roadmap.
+
+## Step 2: Generate Handoff Documents
 
 Create `.3a/handoff/` contents:
 
-### Architecture Summary
+### Architecture Summary (references final-report.html)
 - Final architecture diagram/description
 - ADRs from `.3a/architecture/decisions/`
 - Agent + Deterministic Code boundaries
@@ -33,7 +49,7 @@ Suggest a progression path for the customer:
 - **Walk**: Next improvements — additional features, better eval coverage, CI/CD
 - **Run**: Production readiness — scaling, security hardening, A/B testing, continuous evaluation
 
-## Step 2: Finalize CLAUDE.md
+## Step 3: Finalize CLAUDE.md
 
 Update the project's `CLAUDE.md` so that Claude Code can assist effectively **without the 3a-workflows plugin**:
 - Project overview and architecture
@@ -41,7 +57,7 @@ Update the project's `CLAUDE.md` so that Claude Code can assist effectively **wi
 - How to run, test, deploy
 - Important file locations
 
-## Step 3: Clean Up .3a/
+## Step 4: Clean Up .3a/
 
 Present three options to the user:
 
@@ -53,7 +69,7 @@ Present three options to the user:
 
 Wait for user to choose before proceeding.
 
-## Step 4: Final Commit
+## Step 5: Final Commit
 
 ```
 git add -A
