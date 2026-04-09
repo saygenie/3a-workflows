@@ -86,12 +86,32 @@ Day 5  /3a-deploy prod → /3a-handoff
 3a-workflows/
 ├── .claude-plugin/plugin.json    # Plugin metadata
 ├── .mcp.json                     # MCP server config
-├── agents/                       # Sub-agents
-│   └── kickoff-agent.md
+├── agents/                       # Sub-agents (4)
+│   ├── kickoff-agent.md          #   요구사항 + 아키텍처
+│   ├── review-agent.md           #   도구/컨텍스트/아키텍처 리뷰
+│   ├── eval-agent.md             #   2-Tier 평가 + 원인 분석
+│   └── deploy-agent.md           #   AWS 배포 검증
 ├── commands/                     # Slash commands (8)
 ├── hooks/                        # Quality control hooks
 │   ├── hooks.json
 │   └── scripts/
+├── skills/                       # Knowledge injection (9)
+│   ├── agent-architecture-patterns/
+│   ├── strands-agents-sdk/
+│   ├── bedrock-agentcore/
+│   ├── agent-tool-design/
+│   ├── context-engineering/
+│   ├── agent-evaluation/
+│   ├── harness-engineering/
+│   ├── aws-deployment/
+│   └── sprint-management/
+├── visual/                       # Visual Companion
+│   ├── server.cjs                #   WebSocket server (zero deps)
+│   ├── helper.js                 #   Client-side helper
+│   ├── frame-template.html       #   Base HTML frame
+│   ├── start-server.sh
+│   ├── stop-server.sh
+│   └── screens/                  #   6 screen templates
 ├── scripts/                      # Utility scripts
 └── templates/                    # 4 essential templates
 ```
@@ -103,10 +123,10 @@ Sprint 실행 시 고객 프로젝트에 `.3a/` 디렉토리가 생성되어 spr
 | Phase | Status | 범위 |
 |---|---|---|
 | 1. Core | Done | plugin.json, kickoff-agent, /3a-kickoff, /3a-feature, hooks, templates |
-| 2. Quality | Next | review-agent, eval-agent, /3a-review, /3a-eval (Tier 1) |
-| 3. Workflow | Planned | /3a-status, /3a-checkpoint, /3a-deploy, /3a-handoff, deploy-agent |
-| 4. Skills | Planned | 9 SKILL.md + 필요한 references 점진 추가 |
-| 5. Visual | Planned | Visual Companion (브라우저 기반 대시보드) |
+| 2. Quality | Done | review-agent, eval-agent, /3a-review, /3a-eval (Tier 1) |
+| 3. Workflow | Done | deploy-agent, /3a-status, /3a-checkpoint, /3a-deploy, /3a-handoff |
+| 4. Skills | Done | 9 SKILL.md (references 점진 추가 예정) |
+| 5. Visual | Done | Visual Companion — WebSocket server + 6 screen templates |
 
 ## References
 
