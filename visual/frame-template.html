@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3A Visual Companion</title>
+  <style>
+    /* === CSS Reset & Base === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text: #1a1a2e;
+      --text-secondary: #6c757d;
+      --border: #e0e0e0;
+      --accent: #0066ff;
+      --accent-hover: #0052cc;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --radius: 8px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a2e;
+      --bg-secondary: #16213e;
+      --text: #e8e8e8;
+      --text-secondary: #9ca3af;
+      --border: #2d3748;
+      --accent: #4da6ff;
+      --accent-hover: #80bfff;
+      --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* === Header === */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+    }
+
+    .status-connected { color: var(--success); }
+    .status-connected::before { content: '\25CF '; }
+    .status-disconnected { color: var(--danger); }
+    .status-disconnected::before { content: '\25CB '; }
+
+    /* === Navigation === */
+    .nav {
+      display: flex;
+      gap: 4px;
+      padding: 8px 24px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      background: var(--bg);
+    }
+
+    .nav-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.82rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* === Content Area === */
+    .content {
+      flex: 1;
+      padding: 24px;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* === Content Styles (injected HTML) === */
+    .content h1 { font-size: 1.6rem; margin-bottom: 16px; font-weight: 700; }
+    .content h2 { font-size: 1.25rem; margin: 24px 0 12px; font-weight: 600; color: var(--accent); }
+    .content h3 { font-size: 1.05rem; margin: 16px 0 8px; font-weight: 600; }
+    .content p { margin-bottom: 12px; }
+    .content ul, .content ol { margin: 8px 0 16px 24px; }
+    .content li { margin-bottom: 4px; }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+
+    .content th, .content td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+
+    .content code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .content pre {
+      background: var(--bg-secondary);
+      padding: 16px;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin: 12px 0;
+      border: 1px solid var(--border);
+    }
+
+    .content pre code {
+      background: none;
+      padding: 0;
+    }
+
+    /* === Interactive Elements === */
+    [data-choice] {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 6px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    [data-choice]:hover {
+      border-color: var(--accent);
+      background: var(--bg-secondary);
+    }
+
+    [data-choice].selected {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+
+    /* === Status Cards === */
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    /* === Score/Metric Display === */
+    .metric {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 20px;
+      margin: 6px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .score-high { color: var(--success); }
+    .score-mid { color: var(--warning); }
+    .score-low { color: var(--danger); }
+
+    /* === Progress Bar === */
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    /* === Badge === */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-done { background: #d4edda; color: #155724; }
+    .badge-progress { background: #cce5ff; color: #004085; }
+    .badge-todo { background: #f8f9fa; color: #6c757d; }
+    .badge-blocked { background: #f8d7da; color: #721c24; }
+
+    [data-theme="dark"] .badge-done { background: #1a3a2a; color: #7dcea0; }
+    [data-theme="dark"] .badge-progress { background: #1a2a4a; color: #7db8e0; }
+    [data-theme="dark"] .badge-todo { background: #2d3748; color: #9ca3af; }
+    [data-theme="dark"] .badge-blocked { background: #4a1a2a; color: #e07d8d; }
+
+    /* === Empty State === */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state h2 {
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <div class="logo"><span>3A</span> Visual Companion</div>
+    </div>
+    <div class="header-right">
+      <span id="3a-current-file"></span>
+      <span id="3a-status" class="status-disconnected">Connecting...</span>
+    </div>
+  </header>
+
+  <nav class="nav" id="3a-nav">
+    <!-- Populated by helper.js -->
+  </nav>
+
+  <main class="content" id="3a-content">
+    <div class="empty-state">
+      <h2>3A Visual Companion</h2>
+      <p>Sprint 시작 후 화면이 여기에 표시됩니다.</p>
+      <p><code>/3a-kickoff</code>으로 시작하세요.</p>
+    </div>
+  </main>
+
+  <script src="/helper.js"></script>
+</body>
+</html>

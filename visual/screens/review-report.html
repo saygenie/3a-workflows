@@ -1,0 +1,80 @@
+<!--
+  Review Report Screen
+  Used by: /3a-review (review-agent)
+  Purpose: Display code/architecture review findings organized by severity
+
+  Template variables (replaced by agent):
+  {{REVIEW_SCOPE}} — e.g., "abc1234..HEAD (5 files changed)"
+  {{CRITICAL_COUNT}} — number of critical issues
+  {{IMPORTANT_COUNT}} — number of important issues
+  {{NICE_COUNT}} — number of nice-to-have issues
+-->
+
+<h1>Review Report</h1>
+<p style="color: var(--text-secondary);">Scope: {{REVIEW_SCOPE}}</p>
+
+<!-- Summary -->
+<div style="display: flex; gap: 12px; margin: 20px 0;">
+  <div class="metric">
+    <span class="metric-value score-low">{{CRITICAL_COUNT}}</span>
+    <span class="metric-label">Critical</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value score-mid">{{IMPORTANT_COUNT}}</span>
+    <span class="metric-label">Important</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{NICE_COUNT}}</span>
+    <span class="metric-label">Nice-to-have</span>
+  </div>
+</div>
+
+<!-- Critical Issues -->
+<h2 style="color: var(--danger);">Critical Issues</h2>
+<!-- {{CRITICAL_ISSUES}} — replaced by agent -->
+<div class="card" style="border-left: 4px solid var(--danger);">
+  <div class="card-title">[Tool Design] Example critical issue</div>
+  <p><strong>File:</strong> <code>src/tools/example.py:42</code></p>
+  <p><strong>Issue:</strong> Missing error handling — agent won't know what went wrong.</p>
+  <p><strong>Fix:</strong> Add error-as-prompt pattern with recovery guidance.</p>
+  <div style="margin-top: 8px;">
+    <button data-choice="fix-critical-1" data-context="review-fix">Apply Fix</button>
+  </div>
+</div>
+
+<!-- Important Issues -->
+<h2 style="color: var(--warning);">Important Issues</h2>
+<!-- {{IMPORTANT_ISSUES}} — replaced by agent -->
+<div class="card" style="border-left: 4px solid var(--warning);">
+  <div class="card-title">[Context] Example important issue</div>
+  <p><strong>File:</strong> <code>src/agent.py:15</code></p>
+  <p><strong>Issue:</strong> System prompt at too high altitude — needs more specific boundaries.</p>
+  <p><strong>Suggestion:</strong> Add MUST NOT DO section with explicit refusal scenarios.</p>
+</div>
+
+<!-- Nice-to-have -->
+<h2>Nice-to-have</h2>
+<!-- {{NICE_ISSUES}} — replaced by agent -->
+<div class="card" style="border-left: 4px solid var(--border);">
+  <div class="card-title">[Architecture] Example nice-to-have</div>
+  <p>Consider consolidating search_by_id and search_by_name into a single search tool.</p>
+</div>
+
+<!-- Review Perspectives Legend -->
+<h2>Review Perspectives</h2>
+<table>
+  <thead>
+    <tr><th>Perspective</th><th>Focus</th><th>Issues Found</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Tool Design</td><td>5-element completeness, consolidation, error-as-prompt</td><td><!-- {{TOOL_ISSUES}} --></td></tr>
+    <tr><td>Context & Prompts</td><td>Right Altitude, JIT loading, guardrails</td><td><!-- {{CONTEXT_ISSUES}} --></td></tr>
+    <tr><td>Architecture</td><td>Pattern fit, Agent+Code boundary, simplicity</td><td><!-- {{ARCH_ISSUES}} --></td></tr>
+  </tbody>
+</table>
+
+<!-- Actions -->
+<div style="margin-top: 20px;">
+  <button data-choice="fix-all-critical" data-context="review-action" style="background: var(--danger); color: white; border-color: var(--danger);">Fix All Critical</button>
+  <button data-choice="checkpoint" data-context="review-action">Create Checkpoint</button>
+</div>

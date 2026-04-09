@@ -1,0 +1,109 @@
+<!--
+  Feature Board Screen
+  Used by: /3a-feature, /3a-status
+  Purpose: Kanban-style view of features with status, assignees, and dependencies
+
+  Template variables (replaced by agent):
+  {{PROJECT_NAME}} — project name
+  {{TODO_FEATURES}} — features in todo status
+  {{PROGRESS_FEATURES}} — features in progress
+  {{DONE_FEATURES}} — completed features
+  {{BLOCKED_FEATURES}} — blocked features
+-->
+
+<h1>Feature Board — {{PROJECT_NAME}}</h1>
+
+<!-- Kanban Columns -->
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0;">
+
+  <!-- Todo -->
+  <div>
+    <h3 style="color: var(--text-secondary); margin-bottom: 12px;">
+      Todo <span class="badge badge-todo">{{TODO_COUNT}}</span>
+    </h3>
+    <!-- {{TODO_FEATURES}} — replaced by agent -->
+    <div class="card">
+      <div class="card-title">F-003</div>
+      <p>Example feature</p>
+      <small style="color: var(--text-secondary);">developer-b</small>
+      <div style="margin-top: 4px;">
+        <span class="badge badge-todo">critical</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- In Progress -->
+  <div>
+    <h3 style="color: var(--accent); margin-bottom: 12px;">
+      In Progress <span class="badge badge-progress">{{PROGRESS_COUNT}}</span>
+    </h3>
+    <!-- {{PROGRESS_FEATURES}} — replaced by agent -->
+    <div class="card" style="border-left: 3px solid var(--accent);">
+      <div class="card-title">F-002</div>
+      <p>Example in-progress feature</p>
+      <small style="color: var(--text-secondary);">developer-a</small>
+      <div style="margin-top: 4px;">
+        <span class="badge badge-progress">3/5 tests</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div>
+    <h3 style="color: var(--success); margin-bottom: 12px;">
+      Done <span class="badge badge-done">{{DONE_COUNT}}</span>
+    </h3>
+    <!-- {{DONE_FEATURES}} — replaced by agent -->
+    <div class="card" style="border-left: 3px solid var(--success);">
+      <div class="card-title">F-001</div>
+      <p>Example completed feature</p>
+      <small style="color: var(--text-secondary);">developer-a</small>
+      <div style="margin-top: 4px;">
+        <span class="badge badge-done">5/5 tests</span>
+        <span class="badge badge-done">eval: 92</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blocked -->
+  <div>
+    <h3 style="color: var(--danger); margin-bottom: 12px;">
+      Blocked <span class="badge badge-blocked">{{BLOCKED_COUNT}}</span>
+    </h3>
+    <!-- {{BLOCKED_FEATURES}} — replaced by agent -->
+  </div>
+</div>
+
+<!-- Dependency Graph (Text) -->
+<h2>Dependencies</h2>
+<div class="card">
+  <div class="card-title">Feature Dependencies</div>
+  <!-- {{DEPENDENCY_GRAPH}} — replaced by agent -->
+  <pre><code>F-001 (done) ──→ F-003 (todo)
+F-002 (in-progress) ──→ F-004 (todo)
+F-001 (done) ──→ F-005 (todo)</code></pre>
+</div>
+
+<!-- Developer Summary -->
+<h2>By Developer</h2>
+<table>
+  <thead>
+    <tr><th>Developer</th><th>Done</th><th>In Progress</th><th>Todo</th><th>Blocked</th></tr>
+  </thead>
+  <tbody>
+    <!-- {{DEVELOPER_SUMMARY}} — replaced by agent -->
+    <tr>
+      <td>developer-a</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Actions -->
+<div style="margin-top: 20px;">
+  <button data-choice="start-next" data-context="feature-action">Start Next Feature</button>
+  <button data-choice="reorder" data-context="feature-action">Reorder Priorities</button>
+</div>

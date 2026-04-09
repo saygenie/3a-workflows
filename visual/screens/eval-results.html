@@ -1,0 +1,96 @@
+<!--
+  Evaluation Results Screen
+  Used by: /3a-eval (eval-agent)
+  Purpose: Display evaluation scores, failures, and improvement suggestions
+
+  Template variables (replaced by agent):
+  {{EVAL_TIMESTAMP}} — evaluation timestamp
+  {{EVAL_TIER}} — tier used (1 or 2)
+  {{TOTAL_CASES}} — total test cases
+  {{PASS_CASES}} — passing test cases
+  {{FAIL_CASES}} — failing test cases
+-->
+
+<h1>Evaluation Results</h1>
+<p style="color: var(--text-secondary);">{{EVAL_TIMESTAMP}} | Tier {{EVAL_TIER}} | {{TOTAL_CASES}} test cases</p>
+
+<!-- Score Summary -->
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0;">
+  <div class="metric">
+    <span class="metric-value score-high">{{OVERALL_SCORE}}%</span>
+    <span class="metric-label">Overall</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{TOOL_SELECTION}}%</span>
+    <span class="metric-label">Tool Selection</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{PARAM_ACCURACY}}%</span>
+    <span class="metric-label">Parameter Accuracy</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{REFUSAL_ACCURACY}}%</span>
+    <span class="metric-label">Refusal Accuracy</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{RESPONSE_QUALITY}}%</span>
+    <span class="metric-label">Response Quality</span>
+  </div>
+</div>
+
+<!-- Comparison with Previous -->
+<h2>Comparison</h2>
+<div class="card">
+  <div class="card-title">vs Previous Evaluation</div>
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>Previous</th><th>Current</th><th>Delta</th></tr>
+    </thead>
+    <tbody>
+      <!-- {{COMPARISON_TABLE}} — replaced by agent -->
+      <tr>
+        <td>Tool Selection</td>
+        <td>82</td>
+        <td>87</td>
+        <td style="color: var(--success);">+5</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Failures -->
+<h2>Failures ({{FAIL_CASES}})</h2>
+<table>
+  <thead>
+    <tr><th>Case</th><th>Category</th><th>Query</th><th>Root Cause</th><th>Fix Target</th></tr>
+  </thead>
+  <tbody>
+    <!-- {{FAILURES_TABLE}} — replaced by agent -->
+    <tr>
+      <td>GT-005</td>
+      <td><span class="badge badge-blocked">tool_selection</span></td>
+      <td>Example failing query</td>
+      <td>Tool description ambiguous</td>
+      <td><code>tool-definitions.md</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Improvement Suggestions -->
+<h2>Improvement Priority</h2>
+<div class="card">
+  <div class="card-title">Highest Impact Fix</div>
+  <!-- {{IMPROVEMENT_SUGGESTION}} — replaced by agent -->
+  <p>Fix <strong>Tool Selection</strong> (currently 87%) to potentially reach overall score of ~90%.</p>
+  <p style="margin-top: 8px; color: var(--text-secondary);">
+    Target file: <code>.3a/tool-definitions.md</code> — clarify when-to-use for overlapping tools.
+  </p>
+</div>
+
+<!-- Actions -->
+<h2>Next Steps</h2>
+<div style="margin-top: 12px;">
+  <button data-choice="fix-and-reeval" data-context="eval-action">Apply Fixes & Re-evaluate</button>
+  <button data-choice="add-test-cases" data-context="eval-action">Add Test Cases</button>
+  <button data-choice="accept" data-context="eval-action" style="background: var(--success); color: white; border-color: var(--success);">Accept Results</button>
+</div>

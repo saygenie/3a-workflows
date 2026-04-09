@@ -1,0 +1,128 @@
+<!--
+  Handoff Summary Screen
+  Used by: /3a-handoff
+  Purpose: Present sprint results and Crawl→Walk→Run roadmap at sprint close
+
+  Template variables (replaced by agent):
+  {{PROJECT_NAME}} — project name
+  {{SPRINT_DAYS}} — number of sprint days
+  {{FEATURES_COMPLETED}} — features completed
+  {{FEATURES_PLANNED}} — features planned
+  {{FINAL_EVAL_SCORE}} — final evaluation score
+-->
+
+<h1>Sprint Handoff — {{PROJECT_NAME}}</h1>
+<p style="color: var(--text-secondary);">{{SPRINT_DAYS}}-day co-building sprint complete</p>
+
+<!-- Sprint Summary -->
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0;">
+  <div class="metric">
+    <span class="metric-value">{{FEATURES_COMPLETED}}/{{FEATURES_PLANNED}}</span>
+    <span class="metric-label">Features</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value score-high">{{FINAL_EVAL_SCORE}}%</span>
+    <span class="metric-label">Final Eval</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{COMMITS_COUNT}}</span>
+    <span class="metric-label">Commits</span>
+  </div>
+  <div class="metric">
+    <span class="metric-value">{{GT_CASES}}</span>
+    <span class="metric-label">Test Cases</span>
+  </div>
+</div>
+
+<!-- Key Decisions -->
+<h2>Key Decisions</h2>
+<div class="card">
+  <!-- {{KEY_DECISIONS}} — replaced by agent -->
+  <table>
+    <thead>
+      <tr><th>Decision</th><th>Rationale</th><th>ADR</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Single agent architecture</td>
+        <td>"Start simple" — eval scores met targets without multi-agent</td>
+        <td><code>ADR-001</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Eval Progress -->
+<h2>Evaluation Progress</h2>
+<div class="card">
+  <div class="card-title">Score Progression</div>
+  <!-- {{EVAL_PROGRESSION}} — replaced by agent -->
+  <table>
+    <thead>
+      <tr><th>Day</th><th>Score</th><th>Milestone</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Day 2</td><td>72%</td><td>Baseline established</td></tr>
+      <tr><td>Day 3</td><td>84%</td><td>Tool descriptions improved</td></tr>
+      <tr><td>Day 4</td><td>89%</td><td>Guardrails refined</td></tr>
+      <tr><td>Day 5</td><td>92%</td><td>Final optimization</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Crawl → Walk → Run -->
+<h2>Roadmap: Crawl → Walk → Run</h2>
+
+<div class="card" style="border-left: 4px solid var(--success);">
+  <div class="card-title">Crawl (Current State)</div>
+  <!-- {{CRAWL_STATE}} — replaced by agent -->
+  <ul>
+    <li>Agent working with core features</li>
+    <li>Tier 1 evaluation baseline established</li>
+    <li>Basic observability (logs + traces)</li>
+    <li>Manual deployment process</li>
+  </ul>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--warning);">
+  <div class="card-title">Walk (1-2 Weeks)</div>
+  <!-- {{WALK_PLAN}} — replaced by agent -->
+  <ul>
+    <li>Additional features from backlog</li>
+    <li>CI/CD pipeline for agent deployment</li>
+    <li>Expanded ground truth (100+ cases)</li>
+    <li>Monitoring dashboards + alerts</li>
+  </ul>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--accent);">
+  <div class="card-title">Run (1-2 Months)</div>
+  <!-- {{RUN_PLAN}} — replaced by agent -->
+  <ul>
+    <li>Production auto-scaling</li>
+    <li>Continuous online evaluation</li>
+    <li>Drift detection and automated alerts</li>
+    <li>Security hardening complete</li>
+  </ul>
+</div>
+
+<!-- .3a/ Cleanup -->
+<h2>.3a/ Directory Cleanup</h2>
+<p>Sprint 데이터를 어떻게 처리할까요?</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0;">
+  <button data-choice="keep" data-context="3a-cleanup">
+    <strong>Keep</strong><br>
+    <small>그대로 유지 (참조용)</small>
+  </button>
+
+  <button data-choice="archive" data-context="3a-cleanup">
+    <strong>Archive</strong><br>
+    <small>docs/3a-sprint-*/ 로 이동</small>
+  </button>
+
+  <button data-choice="clean" data-context="3a-cleanup">
+    <strong>Clean</strong><br>
+    <small>GT + eval + handoff만 유지</small>
+  </button>
+</div>

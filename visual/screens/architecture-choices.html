@@ -1,0 +1,79 @@
+<!--
+  Architecture Choices Screen
+  Used by: /3a-kickoff (kickoff-agent)
+  Purpose: Present architecture options for SA/developer to choose from
+
+  Template variables (replaced by agent):
+  {{PROJECT_NAME}} — project name
+  {{PATTERN_RECOMMENDATION}} — recommended pattern with rationale
+  {{AGENTS_COUNT}} — recommended number of agents
+  {{TOOLS_LIST}} — list of identified tools
+-->
+
+<h1>Architecture Decision — {{PROJECT_NAME}}</h1>
+
+<h2>Recommended Pattern</h2>
+<div class="card">
+  <div class="card-title">Agent Architecture Pattern</div>
+  <p>{{PATTERN_RECOMMENDATION}}</p>
+</div>
+
+<h2>Pattern Selection</h2>
+<p>프로젝트에 가장 적합한 패턴을 선택하세요:</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0;">
+  <button data-choice="single-agent" data-context="architecture-pattern">
+    <strong>Single Agent</strong><br>
+    <small>하나의 에이전트 + 도구들</small>
+  </button>
+
+  <button data-choice="prompt-chaining" data-context="architecture-pattern">
+    <strong>Prompt Chaining</strong><br>
+    <small>순차적 단계 처리</small>
+  </button>
+
+  <button data-choice="routing" data-context="architecture-pattern">
+    <strong>Routing</strong><br>
+    <small>입력 유형별 분기</small>
+  </button>
+
+  <button data-choice="orchestrator-workers" data-context="architecture-pattern">
+    <strong>Orchestrator-Workers</strong><br>
+    <small>중앙 조율 + 전문 워커</small>
+  </button>
+</div>
+
+<h2>Agent + Code Boundary</h2>
+<table>
+  <thead>
+    <tr><th>Component</th><th>Type</th><th>Rationale</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>User intent parsing</td><td><span class="badge badge-progress">Agent</span></td><td>Ambiguous, requires reasoning</td></tr>
+    <tr><td>Tool selection</td><td><span class="badge badge-progress">Agent</span></td><td>Context-dependent decision</td></tr>
+    <tr><td>Data validation</td><td><span class="badge badge-done">Code</span></td><td>Deterministic rules</td></tr>
+    <tr><td>API calls</td><td><span class="badge badge-done">Code</span></td><td>Fixed logic</td></tr>
+    <tr><td>Response generation</td><td><span class="badge badge-progress">Agent</span></td><td>Natural language needed</td></tr>
+  </tbody>
+</table>
+
+<h2>Identified Tools</h2>
+<table>
+  <thead>
+    <tr><th>Tool</th><th>Purpose</th><th>Priority</th></tr>
+  </thead>
+  <tbody>
+    <!-- {{TOOLS_LIST}} — replaced by agent -->
+    <tr><td><code>example_tool</code></td><td>Example purpose</td><td><span class="badge badge-done">Critical</span></td></tr>
+  </tbody>
+</table>
+
+<h2>Confirm Architecture</h2>
+<div style="margin-top: 16px;">
+  <button data-choice="approve" data-context="architecture-decision" style="background: var(--success); color: white; border-color: var(--success);">
+    Approve & Proceed
+  </button>
+  <button data-choice="modify" data-context="architecture-decision">
+    Modify
+  </button>
+</div>
