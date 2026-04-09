@@ -65,14 +65,18 @@ Based on the template at `templates/ground-truth-template.json`:
 
 ## Process
 
+**CRITICAL: Do NOT ask questions one by one. Generate everything in a single pass.**
+
 1. Read customer requirements (from user input, file, or conversation)
-2. Ask clarifying questions if critical information is missing — but bias toward action
-3. Generate all 4 deliverables + architecture decision
-4. Create features.json with feature list, dependencies, and assignees (if multiple developers)
+2. If critical info is missing, fill in reasonable defaults — do NOT stop to ask
+3. Generate ALL 4 deliverables + architecture decision in one pass (write all files)
+4. Create features.json with feature list, dependencies, and assignees
 5. Generate sprint-plan.md from template
 6. Generate project CLAUDE.md with sprint context
 7. Suggest OpenTelemetry setup for Day 1 Observability
-8. Present the sprint plan for SA/developer approval
+8. Present the complete sprint plan for SA/developer approval
+
+**Do NOT pause between steps. Write all files, then present the summary at the end.**
 
 ## Principles
 

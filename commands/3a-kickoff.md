@@ -17,21 +17,21 @@ Run the sprint initialization script:
 
 ## Step 2: Gather Requirements
 
-Ask the user for their requirements. They may provide:
+Check if the user has already provided requirements in this conversation. They may have provided:
 - A free-form description of the agent they want to build
 - A requirements document or file
 - A conversation explaining the use case
 
-If the user has already provided requirements in this conversation, proceed directly.
+**IMPORTANT: Do NOT ask multiple questions one by one.** If you need more information, ask ALL questions in a single message, then wait for ONE response. But strongly prefer to just start with what you have — you can always refine later.
 
-Ask these critical questions if not already answered:
-1. **What does the agent do?** (core use case)
-2. **Who are the end users?** (persona)
-3. **What tools/APIs does the agent need?** (external integrations)
-4. **What should the agent refuse to do?** (boundaries)
-5. **How many developers are participating?** (team size for feature assignment)
+If the user gave ANY description of what the agent should do, that is enough to proceed. Fill in reasonable defaults for anything not specified:
+- End users: general users (unless stated otherwise)
+- Boundaries: infer from the agent's purpose
+- Team size: 1 developer (unless stated otherwise)
+- Tech stack: Strands Agents SDK + Amazon Bedrock (unless stated otherwise)
+- External APIs: Mock data first, real APIs later (unless stated otherwise)
 
-Bias toward action — if you have enough information to start, start. You can refine later.
+**Bias toward action — start generating deliverables immediately.** Do not wait for perfect requirements.
 
 ## Step 3: Generate Deliverables
 
